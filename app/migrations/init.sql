@@ -65,15 +65,19 @@ create table oa_app_module
    module_name          varchar(255),
    name_letter_short    varchar(255),
    name_letter_long     varchar(255),
-   module_state         smallint comment '模块的状态,1=启用,2=禁用',
+   module_state         tinyint comment '模块的状态,1=启用,2=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (module_id)
 )
 ENGINE = MYISAM
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
-alter table oa_app_module comment '应用模块管理
-';
+alter table oa_app_module comment '应用模块管理';
 
 /*==============================================================*/
 /* Table: oa_app_module_config                                  */
@@ -86,6 +90,11 @@ create table oa_app_module_config
    `key`                  varchar(255),
    `value`                varchar(255),
    `default`            varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (config_id)
 )
 ENGINE = MYISAM
@@ -100,13 +109,16 @@ create table oa_chat_group
    group_id             int not null auto_increment comment '聊天组id',
    group_name           varchar(255) comment '聊天组名称',
    group_desc           varchar(1000) comment '聊天组介绍',
-   can_chat             smallint default 1 comment '组内成员是否可以聊天',
+   can_chat             tinyint default 1 comment '组内成员是否可以聊天',
    max_users            int default 10000 comment '组内最大的用户数',
-   creator_id           int comment '创建组的用户id',
    creator_name         varchar(255) comment '创建者的用户名称',
-   group_state          smallint,
-   allow_invites        smallint comment '是否允许邀请其他人进组',
-   deleted              smallint comment '软删除',
+   group_state          tinyint default 1 comment '组状态，1=启用，0=禁用',
+   allow_invites        tinyint comment '是否允许邀请其他人进组',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (group_id)
 )
 ENGINE = MYISAM
@@ -122,6 +134,11 @@ create table oa_chat_group_user
 (
    group_id             int not null comment '聊天组id',
    user_id              int not null comment '人员编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (group_id, user_id)
 )
 ENGINE = MYISAM
@@ -135,20 +152,23 @@ create table oa_chat_log
 (
    message_id           bigint not null auto_increment comment '消息编号',
    file_id              int comment '上传的文件编号',
-   from_user_id         int comment '人员编号',
-   to_type              smallint comment '接收者类型，1=user，2=group，3=department',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
    to_id                bigint comment '用户或组或部门的ID',
    to_name              varchar(255) comment '用户或组或部门的名称',
-   message_type         smallint comment '消息类型，1=文本，2=图片(jpg/png)，3=word文档doc，4=excel，5=ppt，6=语音，7=视频，8=zip，9=rar',
+   message_type         tinyint comment '消息类型，1=文本，2=图片(jpg/png)，3=word文档doc，4=excel，5=ppt，6=语音，7=视频，8=zip，9=rar',
    content              varchar(65535) comment '消息类型为文本时为文本内容，为文件类型格式为json:{url:xxx,filename:xxx,secret:xxx,thumb_url:xxx,thumb_secret:xxxx}图片会多thumb
             ',
-   ctime                int comment '发送消息时间',
    from_user_name       varchar(255) comment '发送者用户名称',
    from_user_nick       varchar(255),
    from_user_role       varchar(255) comment '发送者用户角色',
    from_user_dept       varchar(255) comment '发送者用户部门',
-   send_status          smallint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
    ext                  varchar(65535) comment '消息扩展字段json格式，{attr1:xxxx,attr2:xxxx}',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (message_id)
 )
 ENGINE = MYISAM
@@ -163,11 +183,15 @@ alter table oa_chat_log comment '聊天记录';
 create table oa_chat_strategy
 (
    strategy_id          int not null auto_increment,
-   from_user_id         int comment '人员编号',
-   to_type              smallint,
+   to_type              tinyint,
    to_id                int,
-   allow_chat           smallint,
+   allow_chat           tinyint,
    comment              varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (strategy_id)
 )
 ENGINE = MYISAM
@@ -182,15 +206,18 @@ create table oa_collection
    collection_id        int not null auto_increment comment '编号',
    collection_name      varchar(255) comment '收藏名称',
    collection_desc      varchar(1000) comment '收藏介绍',
-   collector_user_id    varchar(255) comment '收藏者用户id',
    collector_user_name  varchar(255) comment '收藏着用户账号',
    collector_user_nick  varchar(255) comment '收藏者昵称',
-   target_type          smallint comment '被收藏的类型,1=user',
+   target_type          tinyint comment '被收藏的类型,1=user',
    target_id            int comment '被收藏的id',
    target_name          varchar(255) comment '被收藏者名称',
    target_letter_long   varchar(255),
    target_letter_short  varchar(255),
-   ctime                int comment '收藏创建时间',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (collection_id)
 )
 ENGINE = MYISAM
@@ -209,16 +236,19 @@ create table oa_files
    file_name            varchar(255) comment '文件名称',
    file_path            varchar(500) comment '文件在服务器的存储路径',
    file_secret          varchar(255) comment '文件的下载唯一码',
-   upload_user_id       int comment '上传者的用户id',
    upload_user_nick     varchar(255) comment '上传者的用户昵称',
    upload_user_name     varchar(255) comment '上传者的账号',
-   file_type            smallint comment '上传的文件类型，2=图片，3=word文档doc，4=excel，5=ppt，6=语音,7=视频，8=zip/rar',
+   file_type            tinyint comment '上传的文件类型，2=图片，3=word文档doc，4=excel，5=ppt，6=语音,7=视频，8=zip/rar',
    thumb_path           varchar(255) comment '如果为图片的时候有缩略图的存储路径',
    thumb_secret         varchar(255) comment '缩略图的唯一下载码',
    to_id                int comment '文件上传为了发送在和某个用户/某个组/部门聊天，对应的用户/组/部门的id',
    to_name              varchar(255) comment '文件发送目标的名称，用户/组/部门',
-   to_type              smallint comment '文件发送目标的类型，1=user,2=group,3=dept',
-   ctime                int,
+   to_type              tinyint comment '文件发送目标的类型，1=user,2=group,3=dept',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (file_id)
 )
 ENGINE = MYISAM
@@ -234,6 +264,11 @@ create table oa_group_user
 (
    group_id             int not null comment '群组编号',
    user_id              int not null comment '人员编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (group_id, user_id)
 )
 ENGINE = MYISAM
@@ -246,8 +281,7 @@ COLLATE = utf8_bin;
 create table oa_mail_log
 (
    mail_id              bigint not null auto_increment comment '发送邮件编号',
-   from_user_id         int comment '人员编号',
-   to_type              smallint comment '接收者类型，1=user，2=group，3=department',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
    to_id                bigint comment '用户或组或部门的ID',
    to_name              varchar(255) comment '用户或组或部门的名称',
    subject              varchar(3000) comment '邮件主题内容',
@@ -258,9 +292,13 @@ create table oa_mail_log
    from_user_nick       varchar(255) comment '发送者用户昵称',
    from_user_role       varchar(255) comment '发送者用户角色',
    from_user_dept       varchar(255) comment '发送者用户部门',
-   is_draft             smallint comment '是否为草稿',
-   ctime                int comment '发送时间',
-   send_status          smallint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   is_draft             tinyint comment '是否为草稿',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (mail_id)
 )
 ENGINE = MYISAM
@@ -276,6 +314,11 @@ create table oa_manage_class
 (
    user_id              int not null comment '人员编号',
    class_id             int not null,
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (user_id, class_id)
 )
 ENGINE = MYISAM
@@ -290,6 +333,11 @@ create table oa_module_tables
    id                   int not null auto_increment,
    module_id            int,
    table_name           varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (id)
 )
 ENGINE = MYISAM
@@ -304,10 +352,9 @@ alter table oa_module_tables comment '模块的表';
 create table oa_notify
 (
    notify_id            bigint not null auto_increment comment '发送邮件编号',
-   from_user_id         int comment '人员编号',
-   notify_type          smallint comment '公告通知/IM消息/日程提醒',
+   notify_type          tinyint comment '公告通知/IM消息/日程提醒',
    to_id                bigint comment '接收者ID列表以逗号分隔',
-   to_type              smallint comment '接收者类型，1=user，2=group，3=department，4=all',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department，4=all',
    to_name              varchar(255) comment '用户或组或部门的名称',
    content              varchar(65535) comment '消息正文内容',
    from_user_phone      varchar(255) comment '发送者的手机号',
@@ -315,9 +362,13 @@ create table oa_notify
    from_user_nick       varchar(255) comment '发送者用户昵称',
    from_user_role       varchar(255) comment '发送者用户角色',
    from_user_dept       varchar(255) comment '发送者用户部门',
-   ctime2               int comment '发送时间',
-   send_status          smallint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
-   if_read              smallint comment '用户是否已经读过1已读,0未读',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   if_read              tinyint comment '用户是否已经读过1已读,0未读',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
    primary key (notify_id)
 )
 ENGINE = MYISAM
@@ -333,7 +384,7 @@ create table oa_role
 (
    role_id              int not null auto_increment comment '角色编号',
    role_name            varchar(1024) comment '角色名称',
-   role_type            smallint comment '1=顶级如公司级别，2=部门，3=用户职务',
+   role_type            tinyint comment '1=顶级如公司级别，2=部门，3=用户职务',
    role_shortname       varchar(255) comment '角色简称',
    name_letter_short    varchar(255) comment '名称拼音首字母',
    name_letter_long     varchar(255) comment '名称拼音全字母',
@@ -351,14 +402,16 @@ create table oa_role
    role_contactor       int comment '部门或公司联系人id',
    role_manager         int comment '公司/部门管理者id',
    role_tel             varchar(128) comment '部门/公司联系电话',
-   role_access          smallint comment '公司/部门通讯录权限，1-所有人，2-仅本部门，3-仅子部门',
+   role_access          tinyint comment '公司/部门通讯录权限，1-所有人，2-仅本部门，3-仅子部门',
    role_leader          int comment '公司部门拥有者',
-   create_time          int comment '创建时间戳',
-   modify_time          int comment '编辑时间戳',
    `left`                 int comment '左值，用于左右值排序',
    `right`                int comment '右值，用于左右值排序',
    `level`                int comment '层级，用于左右值排序',
-   deleted              smallint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (role_id)
 )
 ENGINE = MYISAM
@@ -386,12 +439,14 @@ create table oa_role_extend
    role_extend_traffic  int comment '角色交通标准',
    role_extend_retire   int comment '角色退休标准',
    role_extend_death    int comment '角色丧葬标准',
-   create_time          int comment '创建时间戳',
-   modify_time          int comment '编辑时间戳',
    `left`                 int comment '左值，用于左右值排序',
    `right`                int comment '右值，用于左右值排序',
    `level`                int comment '层级，用于左右值排序',
-   deleted              smallint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (role_extend_id)
 )
 ENGINE = MYISAM
@@ -406,10 +461,14 @@ alter table oa_role_extend comment '角色扩展表（技术职称）';
 create table oa_sign_log
 (
    id                   int not null auto_increment,
-   type                 smallint comment '1=个人签名，2=群组公共记录',
+   type                 tinyint comment '1=个人签名，2=群组公共记录',
    conetent             varchar(65535),
-   creator_id           int,
    target_id            int comment '涉及到的群组/个人的编号id',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (id)
 )
 ENGINE = MYISAM
@@ -424,9 +483,8 @@ alter table oa_sign_log comment '个人签名/聊天群组公告历史记录';
 create table oa_sms_log
 (
    sms_id               bigint not null auto_increment comment '发送邮件编号',
-   from_user_id         int comment '人员编号',
    to_id                bigint comment '用户或组或部门的ID',
-   to_type              smallint comment '接收者类型，1=user，2=group，3=department',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
    to_name              varchar(255) comment '用户或组或部门的名称',
    content              varchar(65535) comment '短信正文内容',
    from_user_phone      varchar(255) comment '发送者的手机号',
@@ -434,9 +492,13 @@ create table oa_sms_log
    from_user_nick       varchar(255) comment '发送者用户昵称',
    from_user_role       varchar(255) comment '发送者用户角色',
    from_user_dept       varchar(255) comment '发送者用户部门',
-   is_draft             smallint comment '是否为草稿',
-   ctime                int comment '发送时间',
-   send_status          smallint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   is_draft             tinyint comment '是否为草稿',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
    primary key (sms_id)
 )
 ENGINE = MYISAM
@@ -458,25 +520,27 @@ create table oa_task
    name_letter_short    varchar(255) comment '名称字母首字母缩写',
    name_letter_long     varchar(255) comment '名称全字母缩写',
    task_desc            varchar(65535) comment '任务简介',
-   task_state           smallint comment '任务状态,1=创建，2=已分配，3=处理中，4=已完成，5=审批通过，6=审批不通过',
-   task_type            smallint comment '1=普通任务,2=工作流任务',
+   task_state           tinyint comment '任务状态,1=创建，2=已分配，3=处理中，4=已完成，5=审批通过，6=审批不通过',
+   task_type            tinyint comment '1=普通任务,2=工作流任务',
    task_detail          varchar(65535) comment '任务详细内容',
-   task_schedule        smallint comment '任务进度1-100百分比',
+   task_schedule        tinyint comment '任务进度1-100百分比',
    task_schedule_desc   varchar(65535) comment '任务进度情况说明',
    task_checked_time    int,
    task_checker_id      int,
    task_checker_name    varchar(255),
    task_check_comment   varchar(65535),
-   creator_id           int comment '创建者id',
    creator_name         varchar(255) comment '创建者名称',
    creator_phone        int comment '创建者联系电话',
    creator_dept         varchar(255) comment '创建者部门',
    creator_role_id      int comment '创建者role的id（所属组织的ID）',
-   ctime                int comment '创建时间',
    start_time           int,
    assign_time          int comment '分配时间',
    finish_time          int comment '任务完成时间',
-   deleted              smallint comment '软删除1=删除，0=没删除',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (task_id)
 )
 ENGINE = MYISAM
@@ -497,10 +561,13 @@ create table oa_task_class
    class_title          varchar(255) comment '类型标题',
    class_content        varchar(255) comment '类型内容',
    mgr_user_id          int comment '负责人id',
-   class_creator_id     int comment '创建者id',
-   ctime                int comment '创建时间',
-   class_state          smallint comment '1=启用，0=禁用',
-   notice_open          smallint,
+   class_state          tinyint comment '1=启用，0=禁用',
+   notice_open          tinyint,
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (class_id)
 )
 ENGINE = MYISAM
@@ -524,7 +591,7 @@ create table oa_user
    user_code            varchar(128) comment '人员内部编号',
    user_letter          text comment '人员姓名全拼，用于快速查找',
    user_avatarr         varchar(256) comment '人员头像URL',
-   user_sex             smallint comment '人员性别',
+   user_sex             tinyint comment '人员性别',
    user_mobile          varchar(128) comment '人员移动手机号',
    user_tel             varchar(128) comment '人员座机电话',
    user_email           varchar(128) comment '人员电子邮件',
@@ -544,14 +611,16 @@ create table oa_user
    user_health          int comment '人员医疗记录,关联体检报告\健康状态\就医记录\用药状况等附表',
    user_finance         int comment '人员财务记录,关联薪资\奖惩\报账\借款\社保等附表',
    user_welfare         int comment ',关联社保状态\开销\领用\报销\代缴等附表',
-   create_time          int comment '创建时间戳',
-   modify_time          int comment '编辑时间戳',
-   is_online            smallint comment '用户的在线心跳检查字段',
-   chat_tone_open       smallint comment '聊天提示音开关1=开，0=关',
+   is_online            tinyint comment '用户的在线心跳检查字段',
+   chat_tone_open       tinyint comment '聊天提示音开关1=开，0=关',
    `left`                 int comment '左值，用于左右值排序',
    `right`                int comment '右值，用于左右值排序',
    `level`                int comment '层级，用于左右值排序',
-   deleted              smallint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (user_id)
 )
 ENGINE = MYISAM
@@ -570,19 +639,20 @@ create table oa_user_group
    group_shortname      varchar(128) comment '群组简称',
    group_desc           varchar(1000),
    group_code           varchar(128) comment '群组内部编码',
-   group_creator        int comment '群组创建人',
    group_departments    varchar(128) comment '群组部门列表',
    group_contactor      varchar(128) comment '人员姓名全拼，用于快速查找',
    group_template       varchar(256) comment '人员头像URL',
-   allow_invites        smallint,
+   allow_invites        tinyint,
    max_users            int,
    sort                 int comment '群组排序，升序',
-   create_time          int comment '创建时间戳',
-   modify_time          int comment '编辑时间戳',
    `left`                 int comment '左值，用于左右值排序',
    `right`                int comment '右值，用于左右值排序',
    `level`                int comment '层级，用于左右值排序',
-   deleted              smallint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (group_id)
 )
 ENGINE = MYISAM
@@ -598,6 +668,11 @@ create table oa_user_role
 (
    user_id              int not null comment '人员编号',
    role_id              int not null comment '角色编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (user_id, role_id)
 )
 ENGINE = MYISAM
@@ -613,6 +688,11 @@ create table oa_user_role_extend
 (
    user_id              int not null comment '人员编号',
    role_extend_id       int not null comment '角色编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (user_id, role_extend_id)
 )
 ENGINE = MYISAM
@@ -628,11 +708,16 @@ create table oa_workflow_executor
 (
    id                   int not null auto_increment,
    node_id              int,
-   execute_type         smallint comment '任务分配类型，1=user,=group,3=department',
+   execute_type         tinyint comment '任务分配类型，1=user,=group,3=department',
    executor_id          int comment '用户/组/部门的id',
    executor_name        varchar(255) comment '执行者名称',
    executor_phone       varchar(255) comment '执行者/部门联系电话',
    feedback_content     varchar(65535) comment '执行者反馈内容',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (id)
 )
 ENGINE = MYISAM
@@ -651,12 +736,17 @@ create table oa_workflow_node
    node_id              int not null auto_increment,
    task_id              int,
    node_name            varchar(255),
-   node_index           smallint,
-   flow_type            smallint,
+   node_index           tinyint,
+   flow_type            tinyint,
    prev_node_index      int,
    next_node_index      int,
-   remind               smallint comment '0不提醒 1邮件 2短信 3邮件和短信 ',
+   remind               tinyint comment '0不提醒 1邮件 2短信 3邮件和短信 ',
    max_day              int comment '最长时间',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (node_id)
 )
 ENGINE = MYISAM
@@ -677,9 +767,14 @@ create table oa_workflow_process
    current_node_index   int,
    start_time           int,
    finish_time          int,
-   state                smallint comment '0=未启动，1=运行， 2=结束 ',
+   state                tinyint comment '0=未启动，1=运行， 2=结束 ',
    start_user_id        int,
    start_user_name      varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
    primary key (process_id)
 )
 ENGINE = MYISAM
@@ -700,10 +795,10 @@ alter table oa_chat_group_user add constraint FK_chat_group_user2 foreign key (u
 alter table oa_chat_log add constraint FK_chat_file foreign key (file_id)
       references oa_files (file_id) on delete restrict on update restrict;
 
-alter table oa_chat_log add constraint FK_message_send foreign key (from_user_id)
+alter table oa_chat_log add constraint FK_message_send foreign key (created_by)
       references oa_user (user_id) on delete restrict on update restrict;
 
-alter table oa_chat_strategy add constraint FK_create_chat_strategy foreign key (from_user_id)
+alter table oa_chat_strategy add constraint FK_create_chat_strategy foreign key (created_by)
       references oa_user (user_id) on delete restrict on update restrict;
 
 alter table oa_files add constraint FK_chat_file2 foreign key (message_id)
@@ -715,7 +810,7 @@ alter table oa_group_user add constraint FK_user_group foreign key (group_id)
 alter table oa_group_user add constraint FK_user_group2 foreign key (user_id)
       references oa_user (user_id) on delete restrict on update restrict;
 
-alter table oa_mail_log add constraint FK_mail_send foreign key (from_user_id)
+alter table oa_mail_log add constraint FK_mail_send foreign key (created_by)
       references oa_user (user_id) on delete restrict on update restrict;
 
 alter table oa_manage_class add constraint FK_manage_class foreign key (user_id)
@@ -727,10 +822,10 @@ alter table oa_manage_class add constraint FK_manage_class2 foreign key (class_i
 alter table oa_module_tables add constraint FK_include_tables foreign key (module_id)
       references oa_app_module (module_id) on delete restrict on update restrict;
 
-alter table oa_notify add constraint FK_send_notify foreign key (from_user_id)
+alter table oa_notify add constraint FK_send_notify foreign key (created_by)
       references oa_user (user_id) on delete restrict on update restrict;
 
-alter table oa_sms_log add constraint FK_Reference_26 foreign key (from_user_id)
+alter table oa_sms_log add constraint FK_Reference_26 foreign key (created_by)
       references oa_user (user_id) on delete restrict on update restrict;
 
 alter table oa_task add constraint FK_create_task foreign key (user_id)
