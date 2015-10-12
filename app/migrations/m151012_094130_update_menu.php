@@ -35,12 +35,13 @@ INSERT INTO {$this->table} VALUES ('10', '通告', '/admin/notify', '0', 'admin/
 INSERT INTO {$this->table} VALUES ('11', '文件发送', '/admin/chat/files', '4', 'admin/chat/files', '1', '1444486278', '1444486208', null, null, '3', '1');
 INSERT INTO {$this->table} VALUES ('12', '组织架构', '/admin/role', '0', 'admin/role', '1', '1444486278', '1444486208', null, null, '0', '1');
 INSERT INTO {$this->table} VALUES ('13', '用户收藏', '/admin/collection', '2', 'admin/collection', '1', '1444486278', '1444486208', null, null, '3', '1');
-INSERT INTO {$this->table} VALUES ('14', '职称', '/admin/role/role-extend', '12', 'admin/role/role-extend', '1', '1444486278', '1444486208', null, null, '3', '1');
+INSERT INTO {$this->table} VALUES ('14', '职称', '/admin/role-extend', '12', 'admin/role-extend', '1', '1444486278', '1444486208', null, null, '3', '1');
 INSERT INTO {$this->table} VALUES ('15', '公司', '/admin/role', '12', 'admin/role', '1', '1444486278', '1444486208', null, null, '1', '1');
 INSERT INTO {$this->table} VALUES ('16', '部门', '/admin/role', '12', 'admin/role', '1', '1444486278', '1444486208', null, null, '2', '1');
 INSERT INTO {$this->table} VALUES ('17', '邮件管理', '/admin/mail-log', '4', 'admin/mail-log', '1', null, null, null, null, '4', '1');
 INSERT INTO {$this->table} VALUES ('18', '短信管理', '/admin/sms-log', '4', 'admin/sms-log', '1', '1444486278', '1444486278', null, null, '4', '1');
 INSERT INTO {$this->table} VALUES ('19', '操作日志', '/admin/operation-log', '2', 'admin/operation-log', '1', null, null, null, null, '4', '1');
+INSERT INTO {$this->table} VALUES ('20', '通告管理', 'admin/notify', '10', 'admin/notify', '1', null, null, null, null, '0', '1');
 SQL;
 
         $this->execute($sql);
@@ -51,7 +52,7 @@ SQL;
     {
         echo "m151012_094130_update_menu cannot be reverted.\n";
 
-        return false;
+//        return false;
     }
     
     /*
