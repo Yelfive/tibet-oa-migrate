@@ -18,6 +18,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Internal Server Error' => '',
+    'Server Internal error' => '@@服务器抽风@@',
     'Action not found' => '操作未找到',
-    'Server Internal error' => '服务器抽风',
 ];
