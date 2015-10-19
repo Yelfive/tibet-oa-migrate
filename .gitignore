@@ -1,2 +1,2 @@
-/app/config/db.php
-/app/.htaccess
+/config/db.php
+/config/includes.php

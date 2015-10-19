@@ -1,0 +1,866 @@
+/*==============================================================*/
+/* DBMS name:      MySQL 5.0                                    */
+/* Created on:     2015/10/3 22:19:09                           */
+/*==============================================================*/
+
+
+drop table if exists {{%app_module}};
+
+drop table if exists {{%app_module_config}};
+
+drop table if exists {{%chat_group}};
+
+drop table if exists {{%chat_group_user}};
+
+drop table if exists {{%chat_log}};
+
+drop table if exists {{%chat_strategy}};
+
+drop table if exists {{%collection}};
+
+drop table if exists {{%files}};
+
+drop table if exists {{%group_user}};
+
+drop table if exists {{%mail_log}};
+
+drop table if exists {{%manage_class}};
+
+drop table if exists {{%module_tables}};
+
+drop table if exists {{%notify}};
+
+drop table if exists {{%role}};
+
+drop table if exists {{%role_extend}};
+
+drop table if exists {{%sign_log}};
+
+drop table if exists {{%sms_log}};
+
+drop table if exists {{%task}};
+
+drop table if exists {{%task_class}};
+
+drop table if exists {{%user}};
+
+drop table if exists {{%user_group}};
+
+drop table if exists {{%user_role}};
+
+drop table if exists {{%user_role_extend}};
+
+drop table if exists {{%workflow_executor}};
+
+drop table if exists {{%workflow_node}};
+
+drop table if exists {{%workflow_process}};
+
+/*==============================================================*/
+/* Table: {{%app_module}}                                         */
+/*==============================================================*/
+create table {{%app_module}}
+(
+   module_id            int not null auto_increment,
+   module_name          varchar(255),
+   name_letter_short    varchar(255),
+   name_letter_long     varchar(255),
+   module_state         tinyint comment '模块的状态,1=启用,2=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (module_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%app_module}} comment '应用模块管理';
+
+/*==============================================================*/
+/* Table: {{%app_module_config}}                                  */
+/*==============================================================*/
+create table {{%app_module_config}}
+(
+   config_id            int not null auto_increment,
+   module_id            int,
+   config_name          varchar(255),
+   `key`                  varchar(255),
+   `value`                varchar(255),
+   `default`            varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (config_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+/*==============================================================*/
+/* Table: {{%chat_group}}                                         */
+/*==============================================================*/
+create table {{%chat_group}}
+(
+   group_id             int not null auto_increment comment '聊天组id',
+   group_name           varchar(255) comment '聊天组名称',
+   group_desc           varchar(1000) comment '聊天组介绍',
+   can_chat             tinyint default 1 comment '组内成员是否可以聊天',
+   max_users            int default 10000 comment '组内最大的用户数',
+   creator_name         varchar(255) comment '创建者的用户名称',
+   enabled               tinyint default 1 comment '状态，1=启用，0=禁用',
+   allow_invites        tinyint comment '是否允许邀请其他人进组',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (group_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%chat_group}} comment '聊天组';
+
+/*==============================================================*/
+/* Table: {{%chat_group_user}}                                    */
+/*==============================================================*/
+create table {{%chat_group_user}}
+(
+   group_id             int not null comment '聊天组id',
+   user_id              int not null comment '人员编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (group_id, user_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+/*==============================================================*/
+/* Table: {{%chat_log}}                                           */
+/*==============================================================*/
+create table {{%chat_log}}
+(
+   message_id           bigint not null auto_increment comment '消息编号',
+   file_id              int comment '上传的文件编号',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
+   to_id                bigint comment '用户或组或部门的ID',
+   to_name              varchar(255) comment '用户或组或部门的名称',
+   message_type         tinyint comment '消息类型，1=文本，2=图片(jpg/png)，3=word文档doc，4=excel，5=ppt，6=语音，7=视频，8=zip，9=rar',
+   content              varchar(65535) comment '消息类型为文本时为文本内容，为文件类型格式为json:{url:xxx,filename:xxx,secret:xxx,thumb_url:xxx,thumb_secret:xxxx}图片会多thumb
+            ',
+   from_fullname       varchar(255) comment '发送者用户名称',
+   from_user_nick       varchar(255),
+   from_user_role       varchar(255) comment '发送者用户角色',
+   from_user_dept       varchar(255) comment '发送者用户部门',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   ext                  varchar(65535) comment '消息扩展字段json格式，{attr1:xxxx,attr2:xxxx}',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (message_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%chat_log}} comment '聊天记录';
+
+/*==============================================================*/
+/* Table: {{%chat_strategy}}                                      */
+/*==============================================================*/
+create table {{%chat_strategy}}
+(
+   strategy_id          int not null auto_increment,
+   to_type              tinyint,
+   to_id                int,
+   allow_chat           tinyint,
+   comment              varchar(255),
+   enabled              tinyint default 1 comment '状态，1=启用，0=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (strategy_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+/*==============================================================*/
+/* Table: {{%collection}}                                         */
+/*==============================================================*/
+create table {{%collection}}
+(
+   collection_id        int not null auto_increment comment '编号',
+   collection_name      varchar(255) comment '收藏名称',
+   collection_desc      varchar(1000) comment '收藏介绍',
+   collector_fullname  varchar(255) comment '收藏着用户账号',
+   collector_user_nick  varchar(255) comment '收藏者昵称',
+   target_type          tinyint comment '被收藏的类型,1=user',
+   target_id            int comment '被收藏的id',
+   target_name          varchar(255) comment '被收藏者名称',
+   target_letter_long   varchar(255),
+   target_letter_short  varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (collection_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%collection}} comment '收藏表';
+
+/*==============================================================*/
+/* Table: {{%files}}                                              */
+/*==============================================================*/
+create table {{%files}}
+(
+   file_id              int not null auto_increment comment '上传的文件编号',
+   message_id           bigint comment '消息编号',
+   file_name            varchar(255) comment '文件名称',
+   file_path            varchar(500) comment '文件在服务器的存储路径',
+   file_secret          varchar(255) comment '文件的下载唯一码',
+   upload_user_nick     varchar(255) comment '上传者的用户昵称',
+   upload_fullname     varchar(255) comment '上传者的账号',
+   file_type            tinyint comment '上传的文件类型，2=图片，3=word文档doc，4=excel，5=ppt，6=语音,7=视频，8=zip/rar',
+   thumb_path           varchar(255) comment '如果为图片的时候有缩略图的存储路径',
+   thumb_secret         varchar(255) comment '缩略图的唯一下载码',
+   to_id                int comment '文件上传为了发送在和某个用户/某个组/部门聊天，对应的用户/组/部门的id',
+   to_name              varchar(255) comment '文件发送目标的名称，用户/组/部门',
+   to_type              tinyint comment '文件发送目标的类型，1=user,2=group,3=dept',
+   enabled               tinyint default 1 comment '状态，1=启用，0=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (file_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%files}} comment '用户上传的各种文件管理表';
+
+/*==============================================================*/
+/* Table: {{%group_user}}                                         */
+/*==============================================================*/
+create table {{%group_user}}
+(
+   group_id             int not null comment '群组编号',
+   user_id              int not null comment '人员编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (group_id, user_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+/*==============================================================*/
+/* Table: {{%mail_log}}                                           */
+/*==============================================================*/
+create table {{%mail_log}}
+(
+   mail_id              bigint not null auto_increment comment '发送邮件编号',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
+   to_id                bigint comment '用户或组或部门的ID',
+   to_name              varchar(255) comment '用户或组或部门的名称',
+   subject              varchar(3000) comment '邮件主题内容',
+   attachment           varchar(255) comment '邮件附件文件路径',
+   content              varchar(65535) comment '邮件正文内容',
+   from_user_email      varchar(255) comment '发送者邮箱地址',
+   from_fullname       varchar(255) comment '发送者名称',
+   from_user_nick       varchar(255) comment '发送者用户昵称',
+   from_user_role       varchar(255) comment '发送者用户角色',
+   from_user_dept       varchar(255) comment '发送者用户部门',
+   is_draft             tinyint comment '是否为草稿',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (mail_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%mail_log}} comment '发送邮件记录';
+
+/*==============================================================*/
+/* Table: {{%manage_class}}                                       */
+/*==============================================================*/
+create table {{%manage_class}}
+(
+   user_id              int not null comment '人员编号',
+   class_id             int not null,
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (user_id, class_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+/*==============================================================*/
+/* Table: {{%module_tables}}                                      */
+/*==============================================================*/
+create table {{%module_tables}}
+(
+   id                   int not null auto_increment,
+   module_id            int,
+   table_name           varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%module_tables}} comment '模块的表';
+
+/*==============================================================*/
+/* Table: {{%notify}}                                             */
+/*==============================================================*/
+create table {{%notify}}
+(
+   notify_id            bigint not null auto_increment comment '发送邮件编号',
+   notify_type          tinyint comment '公告通知/IM消息/日程提醒',
+   to_id                bigint comment '接收者ID列表以逗号分隔',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department，4=all',
+   to_name              varchar(255) comment '用户或组或部门的名称',
+   content              varchar(65535) comment '消息正文内容',
+   from_user_phone      varchar(255) comment '发送者的手机号',
+   from_fullname       varchar(255) comment '发送者名称',
+   from_user_nick       varchar(255) comment '发送者用户昵称',
+   from_user_role       varchar(255) comment '发送者用户角色',
+   from_user_dept       varchar(255) comment '发送者用户部门',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   if_read              tinyint comment '用户是否已经读过1已读,0未读',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint default 1 comment '软删除 0=已删除，1=未删除',
+   primary key (notify_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%notify}} comment '通知信息';
+
+/*==============================================================*/
+/* Table: {{%role}}                                               */
+/*==============================================================*/
+create table {{%role}}
+(
+   role_id              int not null auto_increment comment '角色编号',
+   role_name            varchar(1024) comment '角色名称',
+   role_type            tinyint comment '1=顶级如公司级别，2=部门，3=用户职务',
+   role_shortname       varchar(255) comment '角色简称',
+   name_letter_short    varchar(255) comment '名称拼音首字母',
+   name_letter_long     varchar(255) comment '名称拼音全字母',
+   role_desc            varchar(1024) comment '角色描述',
+   role_code            varchar(128) comment '角色内部编码',
+   role_salary          int comment '角色薪资标准',
+   role_leave           int comment '角色休假标准',
+   role_allowance       int comment '角色津贴标准',
+   role_health          int comment '角色医疗标准',
+   role_stay            int comment '角色住宿标准',
+   role_traffic         int comment '角色交通标准',
+   role_retire          int comment '角色退休标准',
+   role_death           int comment '角色丧葬标准',
+   sort                 int,
+   role_contactor       int comment '部门或公司联系人id',
+   role_manager         int comment '公司/部门管理者id',
+   role_tel             varchar(128) comment '部门/公司联系电话',
+   role_access          tinyint comment '公司/部门通讯录权限，1-所有人，2-仅本部门，3-仅子部门',
+   role_leader          int comment '公司部门拥有者',
+   `left`                 int comment '左值，用于左右值排序',
+   `right`                int comment '右值，用于左右值排序',
+   `level`                int comment '层级，用于左右值排序',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (role_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%role}} comment '角色主表（行政职务）';
+
+/*==============================================================*/
+/* Table: {{%role_extend}}                                        */
+/*==============================================================*/
+create table {{%role_extend}}
+(
+   role_extend_id       int not null auto_increment comment '角色编号',
+   role_extend_name     varchar(1024) comment '角色名称',
+   name_letter_short    varchar(255),
+   name_letter_long     varchar(255),
+   role_extend_desc     varchar(1024) comment '角色描述',
+   role_extend_code     varchar(128) comment '角色内部编码',
+   role_extend_salary   int comment '角色薪资标准',
+   role_extend_leave    int comment '角色休假标准',
+   role_extend_allowance int comment '角色津贴标准',
+   role_extend_health   int comment '角色医疗标准',
+   role_extend_stay     int comment '角色住宿标准',
+   role_extend_traffic  int comment '角色交通标准',
+   role_extend_retire   int comment '角色退休标准',
+   role_extend_death    int comment '角色丧葬标准',
+   `left`                 int comment '左值，用于左右值排序',
+   `right`                int comment '右值，用于左右值排序',
+   `level`                int comment '层级，用于左右值排序',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (role_extend_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%role_extend}} comment '角色扩展表（技术职称）';
+
+/*==============================================================*/
+/* Table: {{%sign_log}}                                           */
+/*==============================================================*/
+create table {{%sign_log}}
+(
+   id                   int not null auto_increment,
+   type                 tinyint comment '1=个人签名，2=群组公共记录',
+   conetent             varchar(65535),
+   target_id            int comment '涉及到的群组/个人的编号id',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%sign_log}} comment '个人签名/聊天群组公告历史记录';
+
+/*==============================================================*/
+/* Table: {{%sms_log}}                                            */
+/*==============================================================*/
+create table {{%sms_log}}
+(
+   sms_id               bigint not null auto_increment comment '发送邮件编号',
+   to_id                bigint comment '用户或组或部门的ID',
+   to_type              tinyint comment '接收者类型，1=user，2=group，3=department',
+   to_name              varchar(255) comment '用户或组或部门的名称',
+   content              varchar(65535) comment '短信正文内容',
+   from_user_phone      varchar(255) comment '发送者的手机号',
+   from_fullname       varchar(255) comment '发送者名称',
+   from_user_nick       varchar(255) comment '发送者用户昵称',
+   from_user_role       varchar(255) comment '发送者用户角色',
+   from_user_dept       varchar(255) comment '发送者用户部门',
+   is_draft             tinyint comment '是否为草稿',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   send_status          tinyint comment '发送状态1=发送成功，0=草稿未发送，2=发送失败',
+   primary key (sms_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%sms_log}} comment '发送短信记录';
+
+/*==============================================================*/
+/* Table: {{%task}}                                               */
+/*==============================================================*/
+create table {{%task}}
+(
+   task_id              int not null auto_increment,
+   user_id              int comment '人员编号',
+   class_id             int,
+   task_name            varchar(1000) comment '任务名称',
+   task_shortname       varchar(255) comment '名称缩写',
+   name_letter_short    varchar(255) comment '名称字母首字母缩写',
+   name_letter_long     varchar(255) comment '名称全字母缩写',
+   task_desc            varchar(65535) comment '任务简介',
+   task_state           tinyint comment '任务状态,1=创建，2=已分配，3=处理中，4=已完成，5=审批通过，6=审批不通过',
+   task_type            tinyint comment '1=普通任务,2=工作流任务',
+   task_detail          varchar(65535) comment '任务详细内容',
+   task_schedule        tinyint comment '任务进度1-100百分比',
+   task_schedule_desc   varchar(65535) comment '任务进度情况说明',
+   task_checked_time    int,
+   task_checker_id      int,
+   task_checker_name    varchar(255),
+   task_check_comment   varchar(65535),
+   creator_name         varchar(255) comment '创建者名称',
+   creator_phone        int comment '创建者联系电话',
+   creator_dept         varchar(255) comment '创建者部门',
+   creator_role_id      int comment '创建者role的id（所属组织的ID）',
+   start_time           int,
+   assign_time          int comment '分配时间',
+   finish_time          int comment '任务完成时间',
+   enabled              tinyint default 1 comment '状态，1=启用，0=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (task_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%task}} comment '工作流中的任务管理
+';
+
+/*==============================================================*/
+/* Table: {{%task_class}}                                         */
+/*==============================================================*/
+create table {{%task_class}}
+(
+   class_id             int not null auto_increment,
+   class_name           varchar(255) comment '任务类型名称',
+   class_num            int comment '类型排序号',
+   class_title          varchar(255) comment '类型标题',
+   class_content        varchar(255) comment '类型内容',
+   mgr_user_id          int comment '负责人id',
+   class_state          tinyint comment '1=启用，0=禁用',
+   notice_open          tinyint,
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (class_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%task_class}} comment '任务类型';
+
+/*==============================================================*/
+/* Table: {{%user}}                                               */
+/*==============================================================*/
+create table {{%user}}
+(
+   user_id              int not null auto_increment comment '人员编号',
+   username             varchar(1024) comment '登录账号',
+   password             varchar(128) comment '人员账号登陆密码MD5(name+pwd)',
+   user_fullname        varchar(1024) comment '人员姓名',
+   user_firstname       varchar(128) comment '人员姓',
+   user_lastname        varchar(128) comment '人员名',
+   user_nickname        varchar(255),
+   name_letter_short    varchar(255) comment '名称首字母',
+   name_letter_long     varchar(255) comment '名称字母',
+   user_code            varchar(128) comment '人员内部编号',
+   user_avatar         varchar(256) comment '人员头像URL',
+   user_sex             tinyint comment '人员性别',
+   user_mobile          varchar(128) comment '人员移动手机号',
+   user_tel             varchar(128) comment '人员座机电话',
+   user_email           varchar(128) comment '人员电子邮件',
+   user_wechat          varchar(128) comment '人员微信openid',
+   user_wechat_info     varchar(256) comment '人员微信信息',
+   user_qq              varchar(128) comment '人员qq登陆 openid',
+   user_qq_info         varchar(256) comment '人员qq登陆信息',
+   user_sina            varchar(128) comment '人员新浪登陆openid',
+   user_sina_info       varchar(256) comment '人员新浪登陆信息',
+   user_birthday        int comment '人员生日时间戳',
+   password_email       varchar(128) comment '人员密保邮箱',
+   password_phone       int comment '人员密保手机',
+   user_question        varchar(256) comment '人员密码找回问题',
+   user_answer          varchar(256) comment '密码找回答案',
+   user_profile         int comment '人员人事档案,关联人事\行政\遴选\公示\履职\培训\职务等附表',
+   user_health          int comment '人员医疗记录,关联体检报告\健康状态\就医记录\用药状况等附表',
+   user_finance         int comment '人员财务记录,关联薪资\奖惩\报账\借款\社保等附表',
+   user_welfare         int comment ',关联社保状态\开销\领用\报销\代缴等附表',
+   is_online            tinyint comment '用户的在线心跳检查字段',
+   chat_tone_open       tinyint comment '聊天提示音开关1=开，0=关',
+   `left`                 int comment '左值，用于左右值排序',
+   `right`                int comment '右值，用于左右值排序',
+   `level`                int comment '层级，用于左右值排序',
+   status               tinyint default 1 comment '状态，10=启用，0=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (user_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%user}} comment '用户单位';
+
+/*==============================================================*/
+/* Table: {{%user_group}}                                         */
+/*==============================================================*/
+create table {{%user_group}}
+(
+   group_id             int not null auto_increment comment '群组编号',
+   group_name           varchar(1024) comment '群组名称',
+   name_letter_short    varchar(255) comment '名称首字母',
+   name_letter_long     varchar(255) comment '名称字母',
+   group_desc           varchar(1000),
+   group_code           varchar(128) comment '群组内部编码',
+   group_departments    varchar(128) comment '群组部门列表',
+   group_contactor      varchar(128) comment '群组联系人',
+   group_avatar       varchar(256) comment '群组头像',
+   allow_invites        tinyint,
+   max_users            int,
+   sort                 int comment '群组排序，升序',
+   `left`                 int comment '左值，用于左右值排序',
+   `right`                int comment '右值，用于左右值排序',
+   `level`                int comment '层级，用于左右值排序',
+   enabled               tinyint default 1 comment '状态，1=启用，0=禁用',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (group_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%user_group}} comment '群组';
+
+/*==============================================================*/
+/* Table: {{%user_role}}                                          */
+/*==============================================================*/
+create table {{%user_role}}
+(
+   user_id              int not null comment '人员编号',
+   role_id              int not null comment '角色编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (user_id, role_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%user_role}} comment '用户行政级别';
+
+/*==============================================================*/
+/* Table: {{%user_role_extend}}                                   */
+/*==============================================================*/
+create table {{%user_role_extend}}
+(
+   user_id              int not null comment '人员编号',
+   role_extend_id       int not null comment '角色编号',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (user_id, role_extend_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%user_role_extend}} comment '用户专业职称';
+
+/*==============================================================*/
+/* Table: {{%workflow_executor}}                                  */
+/*==============================================================*/
+create table {{%workflow_executor}}
+(
+   id                   int not null auto_increment,
+   node_id              int,
+   execute_type         tinyint comment '任务分配类型，1=user,=group,3=department',
+   executor_id          int comment '用户/组/部门的id',
+   executor_name        varchar(255) comment '执行者名称',
+   executor_phone       varchar(255) comment '执行者/部门联系电话',
+   feedback_content     varchar(65535) comment '执行者反馈内容',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%workflow_executor}} comment '工作流节点处理者
+
+';
+
+/*==============================================================*/
+/* Table: {{%workflow_node}}                                      */
+/*==============================================================*/
+create table {{%workflow_node}}
+(
+   node_id              int not null auto_increment,
+   task_id              int,
+   node_name            varchar(255),
+   node_index           tinyint,
+   flow_type            tinyint,
+   prev_node_index      int,
+   next_node_index      int,
+   remind               tinyint comment '0不提醒 1邮件 2短信 3邮件和短信 ',
+   max_day              int comment '最长时间',
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (node_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%workflow_node}} comment '工作流节点';
+
+/*==============================================================*/
+/* Table: {{%workflow_process}}                                   */
+/*==============================================================*/
+create table {{%workflow_process}}
+(
+   process_id           int not null auto_increment,
+   node_id              int,
+   task_id              int,
+   process_desc         varchar(1000),
+   current_node_index   int,
+   start_time           int,
+   finish_time          int,
+   state                tinyint comment '0=未启动，1=运行， 2=结束 ',
+   start_user_id        int,
+   start_fullname      varchar(255),
+   created_at           int comment '创建时间',
+   updated_at           int comment '更新时间',
+   created_by           bigint comment '创建人',
+   updated_by           bigint comment '更新人',
+   deleted              tinyint comment '全局软删除标记，默认未删除值为1，删除为-1，隐藏为0',
+   primary key (process_id)
+)
+ENGINE = MYISAM
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table {{%workflow_process}} comment '工作流进程';
+
+alter table {{%app_module_config}} add constraint FK_module_config foreign key (module_id)
+      references {{%app_module}} (module_id) on delete restrict on update restrict;
+
+alter table {{%chat_group_user}} add constraint FK_chat_group_user foreign key (group_id)
+      references {{%chat_group}} (group_id) on delete restrict on update restrict;
+
+alter table {{%chat_group_user}} add constraint FK_chat_group_user2 foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%chat_log}} add constraint FK_chat_file foreign key (file_id)
+      references {{%files}} (file_id) on delete restrict on update restrict;
+
+alter table {{%chat_log}} add constraint FK_message_send foreign key (created_by)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%chat_strategy}} add constraint FK_create_chat_strategy foreign key (created_by)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%files}} add constraint FK_chat_file2 foreign key (message_id)
+      references {{%chat_log}} (message_id) on delete restrict on update restrict;
+
+alter table {{%group_user}} add constraint FK_user_group foreign key (group_id)
+      references {{%user_group}} (group_id) on delete restrict on update restrict;
+
+alter table {{%group_user}} add constraint FK_user_group2 foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%mail_log}} add constraint FK_mail_send foreign key (created_by)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%manage_class}} add constraint FK_manage_class foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%manage_class}} add constraint FK_manage_class2 foreign key (class_id)
+      references {{%task_class}} (class_id) on delete restrict on update restrict;
+
+alter table {{%module_tables}} add constraint FK_include_tables foreign key (module_id)
+      references {{%app_module}} (module_id) on delete restrict on update restrict;
+
+alter table {{%notify}} add constraint FK_send_notify foreign key (created_by)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%sms_log}} add constraint FK_Reference_26 foreign key (created_by)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%task}} add constraint FK_create_task foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%task}} add constraint FK_task_in_class foreign key (class_id)
+      references {{%task_class}} (class_id) on delete restrict on update restrict;
+
+alter table {{%user_role}} add constraint FK_user_role foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%user_role}} add constraint FK_user_role2 foreign key (role_id)
+      references {{%role}} (role_id) on delete restrict on update restrict;
+
+alter table {{%user_role_extend}} add constraint FK_user_role_extend foreign key (user_id)
+      references {{%user}} (user_id) on delete restrict on update restrict;
+
+alter table {{%user_role_extend}} add constraint FK_user_role_extend2 foreign key (role_extend_id)
+      references {{%role_extend}} (role_extend_id) on delete restrict on update restrict;
+
+alter table {{%workflow_executor}} add constraint FK_workflow_assign foreign key (node_id)
+      references {{%workflow_node}} (node_id) on delete restrict on update restrict;
+
+alter table {{%workflow_node}} add constraint FK_task_workflow foreign key (task_id)
+      references {{%task}} (task_id) on delete restrict on update restrict;
+
+alter table {{%workflow_process}} add constraint FK_node_process foreign key (node_id)
+      references {{%workflow_node}} (node_id) on delete restrict on update restrict;
+
+alter table {{%workflow_process}} add constraint FK_task_process foreign key (task_id)
+      references {{%task}} (task_id) on delete restrict on update restrict;
+
