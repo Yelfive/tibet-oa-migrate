@@ -7,7 +7,7 @@ return [
     'basePath' => __DIR__ . '/..',
     'controllerNamespace' => 'app\console\controllers',
     'components' => [
-        'db' => include '/db.php',
+        'db' => include 'db.php',
         'errorHandler' => [
             'class' => 'app\components\ConsoleErrorHandler',
         ],

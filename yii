@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 /**
  * Yii console bootstrap file.
@@ -15,7 +15,7 @@ define('__ROOT__', __DIR__);
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 defined('STDOUT') or define('STDOUT', fopen('php://stdout', 'w'));
 
-$config = include '/config/console.php';
+$config = include 'config/console.php';
 $application = new yii\console\Application($config);
 ob_start();
 $application->run($config);
