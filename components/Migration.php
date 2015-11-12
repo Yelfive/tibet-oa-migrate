@@ -23,4 +23,27 @@ class Migration extends \yii\db\Migration
     //     }
     //     return parent::execute($sql, $params);
     // }
+
+    /**
+     * Create table with base fields
+     * @param string $table
+     * @param array $columns
+     * @param null $options
+     */
+    public function createTableWithBaseFields($table, $columns, $options = null)
+    {
+        $baseFields = [
+            'created_by' => 'INT COMMENT "创建人"',
+            'updated_by' => 'INT COMMENT "更新人"',
+            'created_at' => 'INT COMMENT "创建时间"',
+            'updated_at' => 'INT COMMENT "更新人"',
+            'deleted' => 'TINYINT DEFAULT 0 COMMENT "是否删除"',
+        ];
+        foreach ($baseFields as $field => $statement) {
+            if (empty($columns[$field])) {
+                $columns[$field] = $statement;
+            }
+        }
+        parent::createTable($table, $columns, $options);
+    }
 }
