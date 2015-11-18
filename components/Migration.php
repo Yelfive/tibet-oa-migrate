@@ -33,11 +33,11 @@ class Migration extends \yii\db\Migration
     public function createTableWithBaseFields($table, $columns, $options = null)
     {
         $baseFields = [
-            'created_by' => 'INT COMMENT "´´½¨ÈË"',
-            'updated_by' => 'INT COMMENT "¸üÐÂÈË"',
-            'created_at' => 'INT COMMENT "´´½¨Ê±¼ä"',
-            'updated_at' => 'INT COMMENT "¸üÐÂÈË"',
-            'deleted' => 'TINYINT DEFAULT 0 COMMENT "ÊÇ·ñÉ¾³ý"',
+            'created_by' => 'INT COMMENT "åˆ›å»ºäºº"',
+            'updated_by' => 'INT COMMENT "æ›´æ–°äºº"',
+            'created_at' => 'INT COMMENT "åˆ›å»ºæ—¶é—´"',
+            'updated_at' => 'INT COMMENT "æ›´æ–°äºº"',
+            'deleted' => 'TINYINT DEFAULT 0 COMMENT "æ˜¯å¦åˆ é™¤"',
         ];
         foreach ($baseFields as $field => $statement) {
             if (empty($columns[$field])) {
