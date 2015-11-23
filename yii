@@ -20,7 +20,10 @@ $application = new yii\console\Application($config);
 ob_start();
 $application->run($config);
 $msg = ob_get_clean();
-if (isset($_SERVER['OS']) && false !== strpos(strtolower($_SERVER['OS']), 'windows') && strtolower(\Yii::$app->db->charset) == 'utf8') {
-    $msg = iconv('UTF-8', 'GBK', $msg);
+if ($msg && isset($_SERVER['OS']) && false !== strpos(strtolower($_SERVER['OS']), 'windows') && strtolower(\Yii::$app->db->charset) == 'utf8') {
+    $msg = @iconv('UTF-8', 'GBK', $msg);
+    if (!$msg) { // In case iconv went wrong
+        $msg = "\n******** Your migration file encoding may not be UTF-8, please check again ********\n";
+    }
 }
 echo $msg;
