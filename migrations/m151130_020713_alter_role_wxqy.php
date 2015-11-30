@@ -22,7 +22,7 @@ class m151130_020713_alter_role_wxqy extends Migration
         $sql = "ALTER TABLE $this->table (
             ADD COLUMN wxid  int NULL COMMENT '部门在微信企业号中的编号' AFTER after_id,
             ADD COLUMN wxpid  int NULL COMMENT '部门在微信企业号中的父编号' AFTER wxid
-            ";
+            )";
         $this->execute($sql);
     }
 
@@ -30,7 +30,6 @@ class m151130_020713_alter_role_wxqy extends Migration
     {
         $this->dropColumn($this->table,'wxid');
         $this->dropColumn($this->table,'wxpid');
-        echo "m151130_020713_alter_role_wxqy cannot be reverted.\n";
     }
     
     /*
