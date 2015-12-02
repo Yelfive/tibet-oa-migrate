@@ -6,8 +6,9 @@ use yii\helpers\Console;
 
 class ConsoleErrorHandler extends \yii\console\ErrorHandler
 {
-    
-    public function renderException($exception) {
+
+    public function renderException($exception)
+    {
         if ($exception instanceof Exception && ($exception instanceof UserException || !YII_DEBUG)) {
             $message = $this->formatMessage($exception->getName() . ': ') . $exception->getMessage();
         } elseif (YII_DEBUG) {
@@ -31,7 +32,10 @@ class ConsoleErrorHandler extends \yii\console\ErrorHandler
         }
 
         if (isset($_SERVER['OS']) && false !== strpos(strtolower($_SERVER['OS']), 'windows') && strtolower(\Yii::$app->db->charset) == 'utf8') {
-            $message = iconv('UTF-8', 'GBK', $message);
+            $msg = @iconv('UTF-8', 'GBK', $message);
+            if ($msg) {
+                $message = $msg;
+            }
         }
         if (PHP_SAPI === 'cli') {
             Console::stderr($message . "\n");
