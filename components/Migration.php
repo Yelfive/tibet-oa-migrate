@@ -39,11 +39,7 @@ class Migration extends \yii\db\Migration
             'updated_at' => 'INT COMMENT "更新人"',
             'deleted' => 'TINYINT DEFAULT 0 COMMENT "是否删除"',
         ];
-        foreach ($baseFields as $field => $statement) {
-            if (empty($columns[$field])) {
-                $columns[$field] = $statement;
-            }
-        }
+        $columns = array_merge($columns, array_diff($baseFields, $columns)); // Make sure the base fields comes at last
         parent::createTable($table, $columns, $options);
     }
 }
