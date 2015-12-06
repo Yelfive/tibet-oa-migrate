@@ -7,17 +7,17 @@ class m151203_075617_work_schedule_add_fields extends Migration
 {
     /**
      * Table name of which to be handled
-     * @var string 
+     * @var string
      */
     public $table = '{{%work_schedule}}';
     public $table_personal_schedule = '{{%personal_schedule}}';
 
     /**
      * Field name of which to be handled
-     * @var string 
+     * @var string
      */
     public $column = '';
-    
+
     public function up()
     {
 
