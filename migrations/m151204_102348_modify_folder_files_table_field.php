@@ -35,9 +35,9 @@ SQL;
 
     public function down()
     {
-        /*$this->dropColumn($this->files,'folder_id');
+        $this->dropColumn($this->files,'folder_id');
         $this->dropColumn($this->files,'file_random_name');
-        $this->dropColumn($this->folder,'disk_path');*/
+        $this->dropColumn($this->folder,'disk_path');
     }
     
     /*
