@@ -20,7 +20,6 @@ class m151204_102348_modify_folder_files_table_field extends Migration
     
     public function up()
     {
-
         $sql = <<<SQL
 ALTER TABLE {$this->files}
 ADD COLUMN folder_id  int NOT NULL DEFAULT 0 COMMENT '文件所属的文件夹ID' AFTER upload_scene,
