@@ -7,22 +7,6 @@ namespace app\components;
 
 class Migration extends \yii\db\Migration
 {
-    /**
-     * Executes a SQL statement.
-     * This method executes the specified SQL statement using [[db]].
-     * @param string $sql the SQL statement to be executed
-     * @param array $params input parameters (name => value) for the SQL execution.
-     * See [[Command::execute()]] for more details.
-     */
-    // public function execute($sql, $params = [])
-    // {
-    //     /* @var $db \yii\db\Connection */
-    //     $db = \Yii::$app->db;
-    //     if (false !== strpos(strtolower($_SERVER['OS']), 'windows') && strtolower($db->charset) !== 'gbk') {
-    //         $sql = iconv($db->charset, 'GBK', $sql);
-    //     }
-    //     return parent::execute($sql, $params);
-    // }
 
     /**
      * Create table with base fields
@@ -41,5 +25,19 @@ class Migration extends \yii\db\Migration
         ];
         $columns = array_merge($columns, array_diff($baseFields, $columns)); // Make sure the base fields comes at last
         parent::createTable($table, $columns, $options);
+    }
+
+    public function createTablesWithBaseFields($tables)
+    {
+        foreach ($tables as $table => $info) {
+            $this->createTableWithBaseFields($table, $info[0], $info[1]);
+        }
+    }
+
+    public function dropTables($tables)
+    {
+        array_walk($tables, function($v, $k) {
+            $this->dropTable($k);
+        });
     }
 }
