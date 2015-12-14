@@ -58,7 +58,6 @@ INSERT INTO oa_menu VALUES ('33', '版块文章', '/admin/forum/article', '29', 
 INSERT INTO oa_menu VALUES ('34', '文章评论', '/admin/forum/article-comment', '29', 'admin/forum/article-comment', '1', null, null, null, null, '0', '0', '', '0.0.0', '3');
 INSERT INTO oa_menu VALUES ('35', '文件夹', '/admin/folder', '28', 'admin/folder', '1', null, null, null, null, '0', '0', '', '0.0.0', '3');
 INSERT INTO oa_menu VALUES ('36', '文件', '/admin/files', '28', 'admin/files', '1', null, null, null, null, '0', '0', '', '0.0.0', '3');
-
 SQL;
         $this->execute($sql);
 
