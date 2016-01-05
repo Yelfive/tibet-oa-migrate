@@ -19,7 +19,7 @@ class m151229_053912_user_state extends Migration
         'us_id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY',
         'user_id' => 'INT UNSIGNED NOT NULL',
         'user_fullname' => 'VARCHAR(255) NOT NULL',
-        'extra' => 'TEXT COMMENT "其余字段,json"',
+        'extra' => 'TEXT COMMENT ""',
     ];
     
     public function up()
@@ -35,7 +35,7 @@ class m151229_053912_user_state extends Migration
     /*
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
-    {g
+    {
     }
     
     public function safeDown()
