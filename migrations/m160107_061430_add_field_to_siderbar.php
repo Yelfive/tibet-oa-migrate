@@ -3,33 +3,28 @@
 use yii\db\Schema;
 use app\components\Migration;
 
-class m151229_053912_user_state extends Migration
+class m160107_061430_add_field_to_siderbar extends Migration
 {
     /**
      * Table name of which to be handled
      * @var string 
      */
-    public $table = '{{%user_state}}';
+    public $table = '{{%notify_sidebar}}';
     
     /**
      * Field name of which to be handled
      * @var string 
      */
-    public $columns = [
-        'us_id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY',
-        'user_id' => 'INT UNSIGNED NOT NULL',
-        'user_fullname' => 'VARCHAR(255) NOT NULL',
-        'extra' => 'TEXT COMMENT ""',
-    ];
+    public $column = 'flag';
     
     public function up()
     {
-        $this->createTableWithBaseFields($this->table, $this->columns);
+        $this->addColumn($this->table, $this->column, 'VARCHAR(50) COMMENT "标识"');
     }
 
     public function down()
     {
-        $this->dropTable($this->table);
+        $this->dropColumn($this->table, $this->column);
     }
     
     /*
