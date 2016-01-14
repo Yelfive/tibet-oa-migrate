@@ -28,7 +28,7 @@ class m151203_031514_add_process extends Migration
     public function up()
     {
         $this->createTableWithBaseFields($this->table, $this->columns, 'ENGINE=InnoDB CHARSET=UTF8 COMMENT="流程处理进度表"');
-        $this->addColumn('{{%vacate}}', 'status', 'TINYINT NOT NULL DEFAULT 0 COMMENT "处理状态：0=未处理，1=通过，2=未通过"');
+        $this->addColumn('{{%vacate}}', 'status', 'TINYINT NOT NULL DEFAULT 0 COMMENT "处理状态：0=未处理，1=通过，-1=未通过"');
     }
 
     public function down()
