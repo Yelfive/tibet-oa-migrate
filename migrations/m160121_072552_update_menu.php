@@ -19,6 +19,7 @@ class m160121_072552_update_menu extends Migration
     
     public function up()
     {
+        $this->truncateTable($this->table);
         $sql = <<<SQL
 INSERT INTO {$this->table} VALUES ('1', '设置', '/admin/menu', '0', 'admin/menu', '1', '1444486278', '1444486208', null, null, '0', '0', '', '0.0.0', '1');
 INSERT INTO {$this->table} VALUES ('2', '用户', '/admin/user', '0', 'admin/user', '1', '1444486208', '1444486208', null, null, '2', '0', '', '0.0.0', '1');
@@ -67,6 +68,7 @@ INSERT INTO {$this->table} VALUES ('44', '菜单', '/admin/menu', '3', '/admin/m
 INSERT INTO {$this->table} VALUES ('45', '设置', '/admin/flow/setting', '42', 'admin/flow/setting', '1', '1452486083', '1452486117', '1', '1', '0', '0', '', '0.0.0', '3');
 SQL;
 
+        $this->execute($sql);
 
     }
 
@@ -74,7 +76,7 @@ SQL;
     {
         echo "m160121_072552_update_menu cannot be reverted.\n";
 
-        return false;
+        return true;
     }
     
     /*
