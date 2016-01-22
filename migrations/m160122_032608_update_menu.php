@@ -11,6 +11,7 @@ class m160122_032608_update_menu extends Migration
      */
     public $table = '{{%menu}}';
     public $table_setting = '{{%setting}}';
+    public $table_forum_board = '{{%forum_board}}';
 
     /**
      * Field name of which to be handled
@@ -72,6 +73,7 @@ SQL;
         $this->execute($sql);
 
         $this->insert($this->table_setting,['name'=>'clear_local_data_file_cache','setting'=>1]);
+        $this->update($this->table_forum_board,['owner_id'=>'']);
     }
 
     public function down()
