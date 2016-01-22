@@ -26,20 +26,6 @@ MODIFY COLUMN political_status  tinyint(4) NULL DEFAULT 0 COMMENT '政治面貌�
 SQL;
         $this->execute($sql);
 
-//        var_dump(Yii::$app->params);die;
-        $dir = '';
-        if(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
-//            $dir = Yii::$app->params['WindowsDataCacheDir'];
-//            $dir = str_replace('/','\\',$dir);
-//            $str = "rd /S/Q " . $dir;
-        } else {
-            $dir = '/data/www/oa/app/data/cache';
-            $str = "rm -rf " . $dir;
-        }
-        if(is_dir($dir)){
-            exec($str);
-        }
-
     }
 
     public function down()
